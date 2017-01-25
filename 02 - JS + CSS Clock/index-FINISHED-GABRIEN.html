@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JS + CSS Clock</title>
+</head>
+<body>
+
+
+<div class="clock">
+    <div class="clock-face">
+        <div class="hand hour-hand"></div>
+        <div class="hand min-hand"></div>
+        <div class="hand second-hand"></div>
+    </div>
+</div>
+
+
+<style>
+    html {
+        background:#018DED url(http://unsplash.it/1500/1000?image=881&blur=50);
+        background-size:cover;
+        font-family:'helvetica neue';
+        text-align: center;
+        font-size: 10px;
+    }
+
+    body {
+        font-size: 2rem;
+        display:flex;
+        flex:1;
+        min-height: 100vh;
+        align-items: center;
+    }
+
+    .clock {
+        width: 30rem;
+        height: 30rem;
+        border:20px solid white;
+        border-radius:50%;
+        margin:50px auto;
+        position: relative;
+        padding:2rem;
+        box-shadow:
+                0 0 0 4px rgba(0,0,0,0.1),
+                inset 0 0 0 3px #EFEFEF,
+                inset 0 0 10px black,
+                0 0 10px rgba(0,0,0,0.2);
+    }
+
+    .clock-face {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+
+    .hand {
+        width: 50%;
+        height: 6px;
+        background: black;
+        position: absolute;
+        top: 50%;
+        transform-origin: 100%; /* 100% of x-axis is far right, default is 50% (middle) */
+        transform: rotate(90deg);
+        transition: all 0.05s;
+        transition-timing-function: cubic-bezier(0.49, 1.76, 0.77, 0.98);
+    }
+
+    .hour-hand {
+        width: 30%;
+        transform-origin: 130%;
+    }
+
+    .is-transition-off {
+        transition: none;
+    }
+
+</style>
+
+<script>
+
+    const SECOND_HAND = document.querySelector('.second-hand');
+    const MINUTE_HAND = document.querySelector('.min-hand');
+    const HOUR_HAND   = document.querySelector('.hour-hand');
+
+    function setDate() {
+        const NOW             = new Date(); // grab the date
+        const SECONDS         = NOW.getSeconds();
+        const SECONDS_DEGREES = ((SECONDS / 60) * 360) + 90; // Add 90 degrees to offset .hand's default 90deg rotation
+        const MINUTES         = NOW.getMinutes();
+        const MINUTES_DEGREES = ((MINUTES / 60) * 360) + 90;
+        const HOURS           = NOW.getHours();
+        const HOURS_DEGREES   = ((HOURS / 12) * 360) + 90;
+
+        // console.log(SECONDS);
+        SECOND_HAND.style.transform = `rotate(${SECONDS_DEGREES}deg)`;
+        MINUTE_HAND.style.transform = `rotate(${MINUTES_DEGREES}deg)`;
+        HOUR_HAND.style.transform   = `rotate(${HOURS_DEGREES}deg)`;
+
+        // Prevent the second hand from flashing to default position at zero seconds
+        if (SECONDS <= 0) {
+            SECOND_HAND.classList.add('is-transition-off');
+        } else {
+            SECOND_HAND.classList.remove('is-transition-off');
+        }
+    }
+
+    setInterval(setDate, 1000);
+
+</script>
+</body>
+</html>
